@@ -4,6 +4,8 @@
 
 Created AppConstants, Ready create OnboardingView and transition in 2 seconds to AuthView (.fullScreenCover)
 
+AuthView added, email and password validation implemented, notification configured for incorrectly entered data. Smooth transition to TabView made
+
 ## 🚀 Возможности
 
 -
