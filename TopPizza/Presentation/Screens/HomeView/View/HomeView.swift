@@ -10,10 +10,12 @@ import SwiftUI
 struct HomeView: View {
     var body: some View {
         VStack {
-            Text("Hello, world!")
+            Text("HomeView")
             
             Spacer(minLength: 110)
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, AppConstants.Layout.offsetPage)
+        .background(.appBg)
     }
 }
