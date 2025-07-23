@@ -61,7 +61,7 @@ struct TextFieldWithIcon: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.appGray, lineWidth: 1)
+                .stroke(.appGray, lineWidth: 1)
         )
     }
 }
