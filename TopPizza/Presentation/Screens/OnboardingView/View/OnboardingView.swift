@@ -8,9 +8,21 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @State private var showAuth: Bool = false
+    
     var body: some View {
-        VStack {
-            Text("OnboardingView")
+        VStack(alignment: .center) {
+            LogotypeView(variant: .white)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.appRed)
+        .fullScreenCover(isPresented: $showAuth) {
+            AuthView()
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                showAuth = true
+            }
         }
     }
 }
