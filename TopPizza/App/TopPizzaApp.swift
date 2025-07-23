@@ -11,7 +11,7 @@ import SwiftUI
 struct TopPizzaApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            OnboardingView()
         }
     }
 }
