@@ -56,11 +56,16 @@ struct TabBar: View {
     private var tabContentView: some View {
         switch selectedTab {
         case 0:
-            HomeView()
+            NavigationView {
+                HomeView()
+            }
         case 1:
             ContactsView()
         case 2:
-            ProfileView()
+            NavigationView {
+                ProfileView()
+                    .navigationTitle("Магазин")
+            }
         case 3:
             BasketView()
         default:
