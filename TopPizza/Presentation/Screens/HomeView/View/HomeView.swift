@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State private var scrollOffset: CGFloat = 0
+    @State private var scrollViewProxy: ScrollViewProxy? = nil
     
     private let bannerHeight: CGFloat = 112
     private let categoryPadding: CGFloat = 24
@@ -19,7 +20,77 @@ struct HomeView: View {
     var body: some View {
         VStack {
             fixedHeader
-            mainContent
+            
+            VStack {
+                // Кнопки для прокрутки к элементам
+                HStack {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(viewModel.cachedCategories, id: \.self) { cat in
+                                Button("\(cat)") {
+                                    withAnimation {
+                                        scrollViewProxy?.scrollTo(cat, anchor: .top)
+                                    }
+                                }
+                                .padding(5)
+                                .background(.blue)
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
+                            }
+                        }
+                    }
+                }
+
+                Text("Scroll Offset: \(scrollOffset, specifier: "%.2f")")
+                    .padding()
+
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        // GeometryReader для отслеживания позиции
+                        GeometryReader { geometry in
+                            let offset = geometry.frame(in: .global).minY
+                            Color.clear
+                                .frame(height: 1)
+                                .onChange(of: offset) { oldValue, newValue in
+                                    scrollOffset = newValue
+                                }
+                        }
+                        .frame(height: 1)
+
+                        // Контент
+                        LazyVStack {
+                            ForEach(viewModel.cachedCategories, id: \.self) { category in
+                                /// использовать ещё один ForEach чтобы выводить товары от текущей категории
+                                if let pizzas = viewModel.pizzasByCategory[category], !pizzas.isEmpty {
+                                    Section {
+                                        ForEach(pizzas, id: \.self) { pizza in
+                                            Text("\(pizza.title)")
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .frame(height: 180)
+                                                .padding()
+                                                .background(.red.opacity(0.1))
+                                        }
+                                    } header: {
+                                        Text(category)
+                                            .font(.system(size: 0))
+                                            .opacity(1)
+                                            .id(category)
+                                    }
+                                    .background(GeometryReader { geometry in
+                                        Color.clear
+                                            .preference(key: ScrollOffsetKey.self, value: [category: geometry.frame(in: .named("scroll")).minY])
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    .onAppear {
+                        scrollViewProxy = proxy // Сохраняем прокси для управления прокруткой
+                    }
+                }
+            }
+            
+//            mainContent
         }
         .background(.appBg)
         .onAppear {
@@ -85,15 +156,14 @@ struct HomeView: View {
                 .padding(.bottom, 8)
             
             bannersView
-                .frame(height: bannerHeight(for: scrollOffset))
-                .opacity(bannerOpacity(for: scrollOffset))
+                .frame(height: 112)
                 .clipped()
             
             pizzaCategories
-                .padding(.top, categoryTopPadding(for: scrollOffset))
+                .padding(.top, 24)
                 .padding(.bottom, 16)
                 .background(.appBg)
-                .shadow(color: .black.opacity(shadowOpacity), radius: 4, x: 0, y: 8)
+                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 8)
                 .zIndex(2)
         }
         .background(.appBg)
@@ -193,28 +263,11 @@ struct HomeView: View {
         .padding(.horizontal, AppConstants.Layout.offsetPage)
         .padding(.bottom, 8)
     }
-    
-    private func bannerHeight(for offset: CGFloat) -> CGFloat {
-        max(0, bannerHeight - min(offset, bannerHeight))
-    }
-    
-    private func bannerOpacity(for offset: CGFloat) -> Double {
-        max(0, 1 + -min(offset / bannerHeight, 1))
-    }
-    
-    private func categoryTopPadding(for offset: CGFloat) -> CGFloat {
-        max(0, categoryPadding - min(offset, bannerHeight) * (categoryPadding / bannerHeight))
-    }
-    
-    private var shadowOpacity: Double {
-        Double(min(max(scrollOffset, 0), bannerHeight)) / Double(bannerHeight) * 0.1
-    }
 }
 
 // PreferenceKey для отладки позиций категорий
 struct ScrollOffsetKey: PreferenceKey {
     static var defaultValue: [String: CGFloat] = [:]
-    
     static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
         value.merge(nextValue()) { $1 }
     }
