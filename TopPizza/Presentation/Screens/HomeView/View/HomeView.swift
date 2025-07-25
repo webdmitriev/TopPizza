@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var viewModel = HomeViewModel()
+
+    @StateObject var viewModel = HomeViewModel(fetchPizzaUseCase: FetchPizzaUseCaseImpl(repository: FetchPizzaRepositoryImpl(dataSource: RemotePizzaDataSourceImpl())))
+
     @State private var scrollOffset: CGFloat = 0
     @State private var scrollViewProxy: ScrollViewProxy? = nil
 
@@ -20,8 +22,8 @@ struct HomeView: View {
     private let cityPickerHeight: CGFloat = 44
     private var allHeaderHeight: CGFloat = 0
     
-    private let maxShadowOpacity: Double = 0.2 // Максимальная непрозрачность тени
-    private let shadowTriggerOffset: CGFloat = -200 // Порог для 100% тени
+    private let maxShadowOpacity: Double = 0.2
+    private let shadowTriggerOffset: CGFloat = -200
     
     init(allHeaderHeight: CGFloat = 0) {
         self.allHeaderHeight = bannerHeight + categoryPadding + categoryHeight + cityPickerHeight + topSafeAreaHeight
@@ -31,59 +33,17 @@ struct HomeView: View {
         VStack {
             fixedHeader
             
-            VStack {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        GeometryReader { geometry in
-                            let offset = geometry.frame(in: .global).minY
-                            Color.clear
-                                .frame(height: 1)
-                                .onChange(of: offset) { oldValue, newValue in
-                                    scrollOffset = newValue
-                                }
-                        }
-                        .frame(height: 1)
-
-                        // Контент
-                        LazyVStack {
-                            ForEach(viewModel.cachedCategories, id: \.self) { category in
-                                /// использовать ещё один ForEach чтобы выводить товары от текущей категории
-                                if let pizzas = viewModel.pizzasByCategory[category], !pizzas.isEmpty {
-                                    Section {
-                                        ForEach(pizzas, id: \.id) { pizza in
-                                            PizzaItemView(pizza: pizza)
-                                        }
-                                    } header: {
-                                        Color.clear
-                                            .frame(height: 1)
-                                            .id(category)
-                                    }
-                                    .background(GeometryReader { geometry in
-                                        Color.clear
-                                            .frame(height: 1)
-                                            .preference(key: ScrollOffsetKey.self, value: [category: geometry.frame(in: .named("scroll")).minY])
-                                    })
-                                    .listRowInsets(EdgeInsets())
-                                }
-                            }
-                        }
-                    }
-                    .onAppear {
-                        // для управления прокруткой
-                        scrollViewProxy = proxy
-                    }
-                }
-            }
+            contentList
         }
         .background(.appBg)
         .onAppear {
+            viewModel.getPizzas()
+            
             if viewModel.selectedCategory == nil, let firstCategory = viewModel.cachedCategories.first {
                 viewModel.selectedCategory = firstCategory
-                print("Initial category set: \(firstCategory)")
             }
             if viewModel.selectedCity == nil, let firstCity = viewModel.cachedCities.first {
                 viewModel.selectedCity = firstCity
-                print("Initial city set: \(firstCity)")
             }
         }
         .navigationBarHidden(true)
@@ -97,6 +57,7 @@ struct HomeView: View {
             cityPicker
                 .frame(height: cityPickerHeight)
                 .padding(.bottom, 8)
+                .zIndex(2)
             
             bannersView
                 .frame(height: animatedHeight)
@@ -164,7 +125,6 @@ struct HomeView: View {
     
     @ViewBuilder
     private var pizzaCategories: some View {
-        // Кнопки для прокрутки к элементам
         ScrollViewReader { prox in
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -192,5 +152,51 @@ struct HomeView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private var contentList: some View {
+        VStack {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    GeometryReader { geometry in
+                        let offset = geometry.frame(in: .global).minY
+                        Color.clear
+                            .frame(height: 1)
+                            .onChange(of: offset) { oldValue, newValue in
+                                scrollOffset = newValue
+                            }
+                    }
+                    .frame(height: 1)
+
+                    // Content List
+                    LazyVStack {
+                        ForEach(viewModel.cachedCategories, id: \.self) { category in
+                            if let pizzas = viewModel.pizzasByCategory[category], !pizzas.isEmpty {
+                                Section {
+                                    ForEach(pizzas, id: \.id) { pizza in
+                                        PizzaItemView(pizza: pizza)
+                                    }
+                                } header: {
+                                    Color.clear
+                                        .frame(height: 1)
+                                        .id(category)
+                                }
+                                .background(GeometryReader { geometry in
+                                    Color.clear
+                                        .frame(height: 1)
+                                        .preference(key: ScrollOffsetKey.self, value: [category: geometry.frame(in: .named("scroll")).minY])
+                                })
+                                .listRowInsets(EdgeInsets())
+                            }
+                        }
+                    }
+                }
+                .onAppear {
+                    scrollViewProxy = proxy
+                }
+            }
+        }
+        .padding(.bottom, 40)
     }
 }

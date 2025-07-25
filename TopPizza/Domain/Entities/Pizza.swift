@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Pizza: Identifiable, Hashable {
+struct Pizza: Identifiable, Hashable, Codable {
     let id: Int
     let title: String
     let descr: String
@@ -16,28 +16,28 @@ struct Pizza: Identifiable, Hashable {
     let city: [PizzaCity]
 }
 
-struct PizzaPrices: Hashable {
+struct PizzaPrices: Hashable, Codable {
     let small: Int
     let medium: Int
     let large: Int
 }
 
-struct PizzaCategories: Identifiable, Hashable {
+struct PizzaCategories: Identifiable, Hashable, Codable {
     let id: Int
     let cat: String
 }
 
-struct PizzaCity: Identifiable, Hashable {
+struct PizzaCity: Identifiable, Hashable, Codable {
     let id: Int
     let name: String
 }
 
-struct PizzaBanner: Identifiable, Hashable {
+struct PizzaBanner: Identifiable, Hashable, Codable {
     let id: Int
     let slides: [PizzaBannerSliders]
 }
 
-struct PizzaBannerSliders: Identifiable, Hashable {
+struct PizzaBannerSliders: Identifiable, Hashable, Codable {
     let id: Int
     let slide: String
 }
