@@ -60,14 +60,20 @@ struct TabBar: View {
                 HomeView()
             }
         case 1:
-            ContactsView()
+            NavigationView {
+                ContactsView()
+                    .navigationTitle("Contacts")
+            }
         case 2:
             NavigationView {
                 ProfileView()
-                    .navigationTitle("Магазин")
+                    .navigationTitle("Profile")
             }
         case 3:
-            BasketView()
+            NavigationView {
+                BasketView()
+                    .navigationTitle("Basket")
+            }
         default:
             EmptyView()
         }

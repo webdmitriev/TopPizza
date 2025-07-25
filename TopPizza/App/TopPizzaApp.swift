@@ -34,7 +34,7 @@ struct RootView: View {
                     .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .trailing)),
                                             removal: .opacity.combined(with: .move(edge: .leading))))
             } else {
-                HomeView()
+                OnboardingView()
                     .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .leading)),
                                             removal: .opacity.combined(with: .move(edge: .trailing))))
             }
