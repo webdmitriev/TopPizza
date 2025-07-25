@@ -1,10 +1,6 @@
 # TopPizza
 
-(информация дополняется) - приложение не готово
-
-Created AppConstants, Ready create OnboardingView and transition in 2 seconds to AuthView (.fullScreenCover)
-
-AuthView added, email and password validation implemented, notification configured for incorrectly entered data. Smooth transition to TabView made
+SwiftUI приложение по заказу пиццы, сделанное в рамках тестирования
 
 ## 🚀 Возможности
 
@@ -19,6 +15,9 @@ AuthView added, email and password validation implemented, notification configur
 - Combine
 
 ## 📸 Скриншоты
+| Onboarding | Auth | Main - 01 | Main - 01 |
+|--------------|--------------|--------------|--------------|
+| ![Onboarding](https://api.webdmitriev.com/wp-content/uploads/2025/07/toppizza-01-scaled.jpg) | ![Auth](https://api.webdmitriev.com/wp-content/uploads/2025/07/toppizza-02-scaled.jpg) | ![Main - 01](https://api.webdmitriev.com/wp-content/uploads/2025/07/toppizza-03-scaled.jpg) | ![Main - 01](https://api.webdmitriev.com/wp-content/uploads/2025/07/toppizza-04-scaled.jpg) |
 
 ## ⚙️ Установка
 
