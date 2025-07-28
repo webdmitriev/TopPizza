@@ -19,7 +19,7 @@ struct NetworkImage: View {
             contentMode: ContentMode = .fill,
             transition: AnyTransition = .opacity,
             placeholderColor: Color = .white,
-            errorImage: String = "pizza-01"
+            errorImage: String = "pizza-mock"
         ) {
             self.url = url
             self.contentMode = contentMode

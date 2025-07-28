@@ -191,6 +191,7 @@ struct HomeView: View {
                             }
                         }
                     }
+                    .padding(.bottom, 12)
                 }
                 .onAppear {
                     scrollViewProxy = proxy
