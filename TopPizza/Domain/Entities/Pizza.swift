@@ -11,6 +11,7 @@ struct Pizza: Identifiable, Hashable, Codable {
     let id: Int
     let title: String
     let descr: String
+    let image: String
     let price: PizzaPrices
     let categories: [PizzaCategories]
     let city: [PizzaCity]

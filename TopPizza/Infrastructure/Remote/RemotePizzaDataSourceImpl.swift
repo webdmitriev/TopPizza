@@ -16,7 +16,7 @@ class RemotePizzaDataSourceImpl: FetchPizzaDataSource {
     }
     
     func fetchPizzas() -> AnyPublisher<[Pizza], any Error> {
-        let endpoint = "/wp-content/uploads/2025/07/pizzas.json"
+        let endpoint = "/wp-content/uploads/2025/07/pizzas-01.json"
         guard let url = URL(string: baseURL + endpoint) else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
