@@ -12,8 +12,7 @@ struct PizzaItemView: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image("pizza-01")
-                .resizable()
+            NetworkImage(url: pizza.image)
                 .frame(width: 112, height: 112)
                 .scaledToFit()
             
